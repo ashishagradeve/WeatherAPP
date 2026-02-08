@@ -9,11 +9,15 @@ import Foundation
 import SwiftData
 
 @Model
-final class SaveLocation {
+final class SaveLocation: Identifiable {
     @Attribute(.unique) var id: Int
     var name: String
     var coord: Coordinates
     var country: String
+
+    var fullName: String {
+        return "\(name), \(country)"
+    }
 
     // To-many relationship to items, delete once Saved Location is deleted
     @Relationship(deleteRule: .cascade) var forecasts: [ForecastItemModel]
@@ -91,8 +95,6 @@ extension SaveLocation {
                 context.insert(location!)
             }
 
-            // 5. Save the context
-            try context.save()
             return location
         } catch {
             print("Failed to update SaveLocation: \(error.localizedDescription)")

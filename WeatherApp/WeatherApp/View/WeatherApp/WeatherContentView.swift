@@ -31,6 +31,9 @@ struct WeatherContentView: View {
                             .font(.system(size: 48, weight: .semibold))
                         Text(saveLocation.currentWeather.weatherType.displayName)
                             .font(.system(size: 26, weight: .medium))
+                        Text(saveLocation.fullName)
+                            .font(.system(size: 22, weight: .medium))
+
                     }
                     .foregroundColor(.white)
                 }

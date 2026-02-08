@@ -22,7 +22,7 @@ class WeatherViewModel: ObservableObject {
     private let locationService: LocationServiceProtocol
 
     // coodinates of search location
-    var coordinates: Coordinates?
+    var selectedCity: City?
     var lastSaveLocation: SaveLocation?
 
     // main model context
@@ -50,9 +50,12 @@ class WeatherViewModel: ObservableObject {
             }
         } receiveValue: { [weak self] current, forecast in
             if let self = self, let context = self.modelContext {
-                _ = try? SaveLocation.updateSaveLocation(withID: forecast.city.id, forecastResponse: forecast, currentWeatherResponse: current, context: context)
+                saveLocation = try? SaveLocation.updateSaveLocation(withID: forecast.city.id, forecastResponse: forecast, currentWeatherResponse: current, context: context)
+                if let selectedCity = self.selectedCity {
+                    saveLocation?.name = selectedCity.name
+                    saveLocation?.country = selectedCity.country
+                }
             }
-            self?.saveLocation = SaveLocation(from: forecast, currentWeatherResponse: current)
         }
         .store(in: &cancellables)
     }
@@ -75,9 +78,9 @@ class WeatherViewModel: ObservableObject {
     }
 
     func retry() {
-        if let coordinates = coordinates {
-            print("custom Coordinates \(coordinates)")
-            self.fetchWeather(for: .init(latitude: coordinates.lat, longitude: coordinates.lon))
+        if let selectedCity = selectedCity {
+            print("custom Coordinates \(selectedCity.coord)")
+            self.fetchWeather(for: .init(latitude: selectedCity.coord.lat, longitude: selectedCity.coord.lon))
         } else if let coordinates = lastSaveLocation?.coord {
             print("lastSaveLocation coordinates \(coordinates)")
             self.fetchWeather(for: .init(latitude: coordinates.lat, longitude: coordinates.lon))

@@ -18,6 +18,7 @@ class LocationSearchService: NSObject, MKLocalSearchCompleterDelegate {
             searchSubject.send(searchText)
         }
     }
+    var isNoDataFound:Bool = false
 
     private let completer = MKLocalSearchCompleter()
     private let searchSubject = PassthroughSubject<String, Never>()
@@ -39,7 +40,8 @@ class LocationSearchService: NSObject, MKLocalSearchCompleterDelegate {
             // Prevent redundant calls if the text hasn't changed
             .removeDuplicates()
             .sink { [weak self] text in
-                if text.isEmpty {
+                self?.isNoDataFound = false
+                if text.count < 2 {
                     // CLEAR results when search is removed/cleared
                     self?.completions = []
                 } else {
@@ -53,8 +55,9 @@ class LocationSearchService: NSObject, MKLocalSearchCompleterDelegate {
     // MARK: - MKLocalSearchCompleterDelegate
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         // Run on main thread to ensure @Observable updates the UI safely
-        DispatchQueue.main.async {
-            self.completions = completer.results
+        DispatchQueue.main.async {[weak self] in
+            self?.completions = completer.results
+            self?.isNoDataFound = completer.results.count == 0
         }
     }
 

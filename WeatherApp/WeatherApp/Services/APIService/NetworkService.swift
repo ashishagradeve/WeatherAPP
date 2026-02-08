@@ -110,7 +110,7 @@ final class NetworkService: NetworkServiceProtocol {
                 }
 
                 if let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                    print(jsonObject)
+//                    print(jsonObject)
                 }
                 return data
             }

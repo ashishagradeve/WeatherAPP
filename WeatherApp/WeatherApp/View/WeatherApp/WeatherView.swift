@@ -12,7 +12,7 @@ struct WeatherView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = WeatherViewModel()
 
-    var coordinate: Coordinates? // Regular property, not @Binding
+    var selectedCity: City? // Regular property, not @Binding
     var lastSaveLocation: SaveLocation? // Regular property, not @Binding
 
     var body: some View {
@@ -28,7 +28,6 @@ struct WeatherView: View {
                 ErrorView(message: errorMessage) {
                     viewModel.retry()
                 }
-            // SCENARIO 3: Show toast, last updated
             }
             // SCENARIO 3: LOADING - Initial state
             else {
@@ -37,7 +36,7 @@ struct WeatherView: View {
         }.background(themeColor)
         .task {
             viewModel.modelContext = modelContext
-            viewModel.coordinates = coordinate
+            viewModel.selectedCity = selectedCity
             viewModel.lastSaveLocation = lastSaveLocation
             //  coordinates for initial load
             viewModel.retry()

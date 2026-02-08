@@ -11,7 +11,7 @@ import SwiftData
 // MARK: - SwiftData Models for Weather Persistence
 
 @Model
-final class ForecastItemModel {
+final class ForecastItemModel:Identifiable {
     @Attribute(.unique) var id: UUID
     var dt: TimeInterval
     var temp: Double

@@ -11,107 +11,74 @@ import SwiftData
 
 struct SearchPlacesView: View {
 
-    // 1. Fetch all SaveLocation objects, sorted by name
-    @Query(sort: \SaveLocation.name) private var locations: [SaveLocation]
-
     @State private var locationManager = LocationSearchService()
-    @State private var selectedCoordinate: Coordinates?
-    @State private var selectedLocation: SaveLocation?
+    @State private var selectedCity: City?
+    @State private var isSearchPresent: Bool = false
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismissSearch) private var dismissSearch
 
     var body: some View {
         NavigationStack {
-            List {
-                // SECTION 1: Always show Current Location
-                Section {
-                    NavigationLink {
-                        WeatherView()
-                    } label: {
-                        Text("Your Current Location")
-                    }
-                }
-
-                Section {
-                    ForEach(locations, id: \.id) { saveLocation in
-                        Button {
-                            self.selectedLocation = saveLocation
+            SavedSearchPlacesView()
+                .navigationTitle("Saved Weather")
+                .searchable( text: $locationManager.searchText, isPresented: $isSearchPresent, placement: SearchFieldPlacement.automatic, prompt: "Search for a place")
+                .searchSuggestions {
+                    // SECTION 1: Always show Current Location
+                    Section {
+                        NavigationLink {
+                            WeatherView()
                         } label: {
-                            HStack {
-                                Text("\(saveLocation.name), \(saveLocation.country)")
+                            Text("Your Current Location")
+                        }
+                    }
 
-                                Spacer()
-
-                                Button {
-                                    saveLocation.isFav.toggle()
-                                    try? modelContext.save()
-                                } label: {
-                                    Image(systemName: "heart")
-                                        .symbolVariant(saveLocation.isFav ? .fill : .none)
+                    // SECTION 2: Dynamic Autocomplete Results
+                    Section("Suggestions") {
+                        ForEach(locationManager.completions, id: \.title) { completion in
+                            Button {
+                                getCoordinate(completion: completion)
+                            } label: {
+                                VStack(alignment: .leading) {
+                                    Text(completion.title)
+                                    Text(completion.subtitle)
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
                                 }
                             }
                         }
                     }
-                    .onDelete(perform: deleteLocation)
-                }
-            }
-            .overlay {
-                if locations.isEmpty {
-                    ContentUnavailableView("No Locations", systemImage: "mappin.slash", description: Text("Search for a location to see weather updates."))
-                }
-            }
-            .navigationTitle("Saved Weather")
-            .searchable(text: $locationManager.searchText)
-            .searchSuggestions {
-                // SECTION 1: Always show Current Location
-                Section {
-                    NavigationLink {
-                        WeatherView()
-                    } label: {
-                        Text("Your Current Location")
+                }.overlay {
+                    if locationManager.isNoDataFound == true && locationManager.completions.isEmpty {
+                        ContentUnavailableView("No Locations Found", systemImage: "mappin.slash", description: Text(""))
                     }
                 }
-
-                // SECTION 2: Dynamic Autocomplete Results
-                Section("Suggestions") {
-                    ForEach(locationManager.completions, id: \.self) { completion in
-                        Button {
-                            // 1. Fetch the coordinate manually
-                            locationManager.getCoordinate(from: completion) { coord in
-                                // 2. Setting this triggers the navigation
-                                self.selectedCoordinate = coord
-                            }
-                        } label: {
-                            VStack(alignment: .leading) {
-                                Text(completion.title)
-                                Text(completion.subtitle)
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                            }
-                        }
-                    }
+                .navigationDestination(item: $selectedCity) { item in
+                    WeatherView(selectedCity: item)
                 }
-            }
-            .navigationDestination(item: $selectedCoordinate) { item in
-                WeatherView(coordinate: item)
-            }
-            .navigationDestination(item: $selectedLocation) { selectedLocation in
-                WeatherView(lastSaveLocation: selectedLocation)
-            }
-            .listStyle(.plain) // Removes grouped styling/rounded corner
+                .listStyle(.plain) // Removes grouped styling/rounded corner
         }
     }
 
-    // Helper function to delete saved locations
-    private func deleteLocation(at offsets: IndexSet) {
-        for index in offsets {
-            let locationToDelete = locations[index]
-            modelContext.delete(locationToDelete)
+    private func getCoordinate(completion: MKLocalSearchCompletion) {
+        // 1. Fetch the coordinate manually
+        locationManager.getCoordinate(from: completion) { coord in
+            // 2. Setting this triggers the navigation
+            if let coord = coord {
+                self.isSearchPresent = false
+                self.locationManager.searchText = ""
+                self.selectedCity = City(id: 1, name: completion.title, coord: coord, country:completion.subtitle)
+            }
         }
     }
 }
+
+
 #Preview {
     SearchPlacesView()
 }
+
+
+
 
 

@@ -11,7 +11,7 @@ import SwiftData
 // MARK: - SwiftData Models for Weather Persistence
 
 @Model
-final class CurrentWeatherModel {
+final class CurrentWeatherModel:Identifiable {
     @Attribute(.unique) var id: UUID
     var latitude: Double
     var longitude: Double
