@@ -16,7 +16,6 @@ struct SearchPlacesView: View {
     @State private var isSearchPresent: Bool = false
 
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.dismissSearch) private var dismissSearch
 
     var body: some View {
         NavigationStack {
