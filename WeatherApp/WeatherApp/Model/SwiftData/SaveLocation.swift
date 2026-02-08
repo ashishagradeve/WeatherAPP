@@ -16,7 +16,7 @@ final class SaveLocation: Identifiable {
     var country: String
 
     var fullName: String {
-        return "\(name), \(country)"
+        return "\(name) \(country.count == 0 ? "" : ", \(country)")"
     }
 
     // To-many relationship to items, delete once Saved Location is deleted
