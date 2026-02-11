@@ -28,7 +28,7 @@ enum WeatherEndpoint: Endpoint {
     }
 
     var queryItems: [URLQueryItem] {
-        let apiKey = "984307bbe38739de3fe6a1a9e545e108"
+        let apiKey = APIKeyProvider.openWeather
 
         switch self {
         case .currentWeather(let lat, let lon), .forecast(let lat, let lon):
@@ -77,3 +77,4 @@ final class WeatherAPIService: WeatherAPIServiceProtocol {
         return networkService.request(endpoint: endpoint)
     }
 }
+

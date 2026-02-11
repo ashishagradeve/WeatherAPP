@@ -67,8 +67,13 @@ final class LocationService: NSObject, LocationServiceProtocol {
             requestPermission()
         case .restricted, .denied:
             locationSubject.send(.failure(.unauthorized))
+        #if os(macOS)
+        case .authorized:
+            locationManager.requestLocation()
+        #else
         case .authorizedAlways, .authorizedWhenInUse:
             locationManager.requestLocation()
+        #endif
         @unknown default:
             locationSubject.send(.failure(.unavailable))
         }
@@ -78,10 +83,16 @@ final class LocationService: NSObject, LocationServiceProtocol {
 // MARK: - CLLocationManagerDelegate
 extension LocationService: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        #if os(macOS)
+        if manager.authorizationStatus == .authorized {
+            requestLocation()
+        }
+        #else
         if manager.authorizationStatus == .authorizedWhenInUse ||
            manager.authorizationStatus == .authorizedAlways {
             requestLocation()
         }
+        #endif
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -118,3 +129,4 @@ extension LocationService: CLLocationManagerDelegate {
         }
     }
 }
+

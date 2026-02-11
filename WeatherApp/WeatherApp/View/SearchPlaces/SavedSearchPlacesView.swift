@@ -9,65 +9,100 @@ import SwiftUI
 import SwiftData
 
 struct SavedSearchPlacesView: View {
-    // 1. Fetch all SaveLocation objects, sorted by name
-    @Query( sort: \SaveLocation.name) private var locations: [SaveLocation]
+    @Query(sort: [SortDescriptor(\SaveLocation.name, comparator: .localizedStandard)]) private var locations: [SaveLocation]
     @Environment(\.modelContext) private var modelContext
     @State private var selectedLocation: SaveLocation?
 
     var body: some View {
+        // This body now only re-evaluates if 'locations' (SwiftData) changes
+        // or if 'selectedLocation' changes.
         List {
-            // SECTION 1: Always show Current Location
             Section {
-                NavigationLink {
-                    WeatherView()
-                } label: {
+                NavigationLink(destination: WeatherView()) {
                     Text("Your Current Location")
-                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
 
-            if locations.count > 0 {
+            if !locations.isEmpty {
                 Section("Saved Locations") {
-                    ForEach(locations, id: \.id) { saveLocation in
-                        Button {
-                            self.selectedLocation = saveLocation
-                        } label: {
-                            HStack {
-                                Text(saveLocation.fullName)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                                Button {
-                                    saveLocation.isFav.toggle()
+                    ForEach(locations) { location in
+                        // Internal optimization: Row updates are scoped to the Row view
+                        SavedPlacesRow(
+                            isFav: Binding(
+                                get: { location.isFav },
+                                set: { location.isFav = $0
                                     try? modelContext.save()
-                                } label: {
-                                    Image(systemName: "heart")
-                                        .symbolVariant(saveLocation.isFav ? .fill : .none)
-                                }.frame(alignment: .trailing)
-                            }
+                                }
+                            ),
+                            fullName: location.fullName
+                        ) {
+                            self.selectedLocation = location
                         }
                     }
                     .onDelete(perform: deleteLocation)
                 }
             }
-        }.overlay {
+        }
+        .listStyle(.plain)
+        .overlay {
             if locations.isEmpty {
-                ContentUnavailableView("No Locations", systemImage: "mappin.slash", description: Text("Search for a location to see weather updates."))
+                ContentUnavailableView {
+                    Label("No Locations Found", systemImage: "mappin.slash")
+                } description: {
+                    Text("Search the city to add it to the list")
+                }
             }
-        }.navigationDestination(item: $selectedLocation) { selectedLocation in
-            let _ = Self._printChanges()
-            WeatherView(lastSaveLocation: selectedLocation)
+        }
+        .navigationDestination(item: $selectedLocation) { location in
+            WeatherView(lastSaveLocation: location)
         }
     }
 
-    // Helper function to delete saved locations
     private func deleteLocation(at offsets: IndexSet) {
-        for index in offsets {
-            let locationToDelete = locations[index]
-            modelContext.delete(locationToDelete)
+        // Resolve concrete indices first to avoid mutation issues while iterating
+        let indices = Array(offsets)
+        for index in indices {
+            let location = locations[index]
+            modelContext.delete(location)
         }
+        // Persist deletions explicitly to avoid ambiguity in previews
+        try? modelContext.save()
     }
 }
 
-#Preview {
-    SavedSearchPlacesView()
+#Preview("Saved Places") {
+    let container = getModelContainer()
+    // 3. Optional: Add mock data so you can see the list in the preview canvas
+    let sampleLocations = [
+        SaveLocation(from: ForecastResponse.sampleData, currentWeatherResponse: CurrentWeatherResponse.sampleData)
+    ]
+
+    for location in sampleLocations {
+        container.mainContext.insert(location)
+    }
+
+    // 4. Return the view to preview, providing the model container
+    return NavigationStack {
+        SavedSearchPlacesView()
+    }
+    .modelContainer(container)
+}
+
+#Preview("Empty Saved Places") {
+    let container = getModelContainer()
+
+    // 4. Return the view to preview, providing the model container
+    return NavigationStack {
+        SavedSearchPlacesView()
+    }
+    .modelContainer(container)
+}
+
+
+func getModelContainer() -> ModelContainer {
+    // 1. Set up a memory-only configuration to avoid affecting real app data
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+
+    // 2. Initialize the container for your SaveLocation model
+    return try! ModelContainer(for: SaveLocation.self, configurations: config)
 }

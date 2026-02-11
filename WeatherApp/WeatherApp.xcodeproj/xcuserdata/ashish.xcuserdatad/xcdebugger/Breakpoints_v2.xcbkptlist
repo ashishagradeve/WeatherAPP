@@ -1,71 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Bucket
-   uuid = "24DDF65D-1474-4AEE-B996-86A394F174B2"
+   uuid = "51D41345-B703-474E-924A-E6111C99752B"
    type = "1"
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8FB1C76B-C551-4AB1-ACF3-471D76FEA555"
+            uuid = "73CB3DF0-4367-46C8-B7D6-9432D5BB7CF9"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "WeatherApp/Model/CurrentWeatherResponse.swift"
+            filePath = "WeatherApp/Services/LocationSearchService/LocationSearchService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "72"
-            endingLineNumber = "72"
-            landmarkName = "encode(to:)"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "completerDidUpdateResults(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "98F1A9A8-9588-410C-ADA0-300442CE6935"
+            uuid = "AD9E733B-5B60-459F-BF77-C0D720B214CC"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "WeatherApp/Services/LocationService/LocationService.swift"
+            filePath = "WeatherApp/Services/LocationSearchService/LocationSearchService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
-            landmarkName = "locationManager(_:didUpdateLocations:)"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "completerDidUpdateResults(_:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "BAAC80CF-24C8-4BA1-9F3F-9A4A4FF5AA3D"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "WeatherApp/Services/LocationService/LocationService.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "73"
-            endingLineNumber = "73"
-            landmarkName = "requestLocation()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "49E0260D-F04D-43AB-A150-22FDCACBF7D3"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "WeatherApp/Services/LocationService/LocationService.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "69"
-            endingLineNumber = "69"
-            landmarkName = "requestLocation()"
-            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "AD9E733B-5B60-459F-BF77-C0D720B214CC - 955ede383f7aed1f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WeatherApp.LocationSearchService.completerDidUpdateResults(__C.MKLocalSearchCompleter) -&gt; ()"
+                  moduleName = "WeatherApp.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ashish/Documents/SourceTree/WeatherAPP/WeatherApp/WeatherApp/Services/LocationSearchService/LocationSearchService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58">
+               </Location>
+               <Location
+                  uuid = "AD9E733B-5B60-459F-BF77-C0D720B214CC - 1c851f7b645913a9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in WeatherApp.LocationSearchService.completerDidUpdateResults(__C.MKLocalSearchCompleter) -&gt; ()"
+                  moduleName = "WeatherApp.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ashish/Documents/SourceTree/WeatherAPP/WeatherApp/WeatherApp/Services/LocationSearchService/LocationSearchService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "58"
+                  endingLineNumber = "58">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

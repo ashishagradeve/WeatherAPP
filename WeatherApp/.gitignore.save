@@ -1,0 +1,18 @@
+cat <<EOF > .gitignore
+# Xcode
+# User-specific files
+xcuserdata/
+DerivedData/
+build/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Dependency Managers
+Pods/
+Carthage/Build/
+
+# OS
+.DS_Store
+EOF
